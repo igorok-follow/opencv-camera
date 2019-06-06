@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 public class CameraPanel extends JPanel implements Runnable, ActionListener {
 
@@ -32,13 +33,42 @@ public class CameraPanel extends JPanel implements Runnable, ActionListener {
         test.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                counter++;
-                string = JOptionPane.showInputDialog("Enter the file name:");
-                file = new File(String.valueOf(string + counter) + ".png");
+                Random random = new Random();
+                counter = random.nextInt(10000);
+                file = new File(String.valueOf(counter + ".png"));
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
+
+
                 try {
                     ImageIO.write(bufferedImage, "png", file);
                 } catch (IOException e1) {
                     e1.printStackTrace();
+                }
+
+                string = JOptionPane.showInputDialog(null, "Enter the file name: ", "Input", JOptionPane.INFORMATION_MESSAGE);
+                if (JOptionPane.YES_OPTION == 1) {
+                    File file1 = new File(string + ".png");
+
+                    if (file.exists()) {
+                        System.out.println("File " + counter + ".png exists");
+                    }
+
+                    boolean succsess = file.renameTo(file1);
+
+                    if (!succsess) {
+                        System.out.println("File " + file.getName() + "was not renamed!");
+                    }
+                } else {
+                    if (file.delete()) {
+                        System.out.println(file.getName() + " was deleted");
+                        System.out.println(string);
+                    } else {
+
+                    }
                 }
             }
         });
